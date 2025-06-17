@@ -1,41 +1,41 @@
-// Mobile sidebar functionality
-document.getElementById("menuBtn").addEventListener("click", function () {
-  document.getElementById("sidebar").classList.remove("translate-x-full");
-});
+ document.addEventListener("DOMContentLoaded", () => {
+    const sidebar = document.getElementById("sidebar");
+    const menuBtn = document.getElementById("menuBtn");
+    const closeBtn = document.getElementById("closeBtn");
 
-document.getElementById("closeBtn").addEventListener("click", function () {
-  document.getElementById("sidebar").classList.add("translate-x-full");
-});
+    // فتح القائمة الجانبية
+    menuBtn?.addEventListener("click", () => {
+      sidebar.classList.remove("translate-x-full");
+      sidebar.classList.add("translate-x-0");
+    });
 
-// Simple hero section carousel (for demonstration, no actual image change logic)
-// You'd typically have an array of images and update the src attribute
-// based on prev/next clicks. For now, these buttons are purely illustrative.
-document.getElementById("prevBtn").addEventListener("click", function () {
-  console.log("Previous button clicked");
-  // Add logic to change image/content
-});
+    // إغلاق القائمة الجانبية
+    closeBtn?.addEventListener("click", () => {
+      sidebar.classList.add("translate-x-full");
+      sidebar.classList.remove("translate-x-0");
+    });
 
-document.getElementById("nextBtn").addEventListener("click", function () {
-  console.log("Next button clicked");
-  // Add logic to change image/content
-});
+    // فتح القائمة الفرعية
+    const submenuButtons = document.querySelectorAll(".submenuBtn");
+    submenuButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const submenuId = "submenu-" + btn.dataset.submenu;
+        const submenu = document.getElementById(submenuId);
+        submenu.classList.remove("translate-x-full");
+        submenu.classList.add("translate-x-0");
+      });
+    });
 
-// Sidebar functionality
-const menuBtn = document.getElementById("menuBtn");
-const sidebar = document.getElementById("sidebar");
-const closeBtn = document.getElementById("closeBtn");
-
-if (menuBtn && sidebar && closeBtn) {
-  menuBtn.addEventListener("click", () => {
-    sidebar.classList.remove("translate-x-full");
-    sidebar.classList.add("translate-x-0");
+    // زر الرجوع في القائمة الفرعية
+    const backButtons = document.querySelectorAll(".backBtn");
+    backButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const submenu = btn.closest("div[id^='submenu-']");
+        submenu.classList.remove("translate-x-0");
+        submenu.classList.add("translate-x-full");
+      });
+    });
   });
-
-  closeBtn.addEventListener("click", () => {
-    sidebar.classList.remove("translate-x-0");
-    sidebar.classList.add("translate-x-full");
-  });
-}
 
 // Carousel functionality
 const carouselContainer = document.getElementById("carousel-container");
@@ -139,49 +139,52 @@ function prev() {
 
 renderCards();
 
-  function toggleAccordion(clickedElement) {
-    const allItems = document.querySelectorAll("#accordion .accordion-item");
+function toggleAccordion(clickedElement) {
+  const allItems = document.querySelectorAll("#accordion .accordion-item");
 
-    allItems.forEach(item => {
-      const content = item.querySelector(".accordion-content");
-      const icon = item.querySelector(".icon");
+  allItems.forEach((item) => {
+    const content = item.querySelector(".accordion-content");
+    const icon = item.querySelector(".icon");
 
-      // Close all
-      content.classList.add("hidden");
-      icon.src = "assets/images/QA/+.svg";
-    });
+    // Close all
+    content.classList.add("hidden");
+    icon.src = "assets/images/QA/+.svg";
+  });
 
-    const content = clickedElement.nextElementSibling;
-    const icon = clickedElement.querySelector(".icon");
+  const content = clickedElement.nextElementSibling;
+  const icon = clickedElement.querySelector(".icon");
 
-    // Open if not already open
-    if (content.classList.contains("hidden")) {
-      content.classList.remove("hidden");
-      icon.src = "assets/images/QA/-.svg";
-    } else {
-      content.classList.add("hidden");
-      icon.src = "assets/images/QA/+.svg";
-    }
+  // Open if not already open
+  if (content.classList.contains("hidden")) {
+    content.classList.remove("hidden");
+    icon.src = "assets/images/QA/-.svg";
+  } else {
+    content.classList.add("hidden");
+    icon.src = "assets/images/QA/+.svg";
   }
+}
 
-  
-  const products = [
+document.addEventListener("DOMContentLoaded", () => {
+  const offers = [
     {
-      image:  "assets/images/shopopping/bracelets.jpg",
+      image: "assets/images/offers/throat2.svg",
+      image2: "assets/images/offers/product3.jpg",
       category: "الحلقان",
       name: "حلق ذهبي دائري",
       price: "500 ر.س",
       oldPrice: "650 ر.س",
     },
     {
-      image:  "assets/images/shopopping/bracelets.jpg",
+      image: "assets/images/offers/product1.jpg",
+      image2: "assets/images/offers/chains2.jpg",
       category: "القلادات",
       name: "قلادة ذهبية فاخرة",
       price: "750 ر.س",
       oldPrice: "950 ر.س",
     },
     {
-      image:  "assets/images/shopopping/bracelets.jpg",
+      image: "assets/images/offers/product2.jpg",
+      image2: "assets/images/offers/chains.jpg",
       category: "الأساور",
       name: "سوار لؤلؤ أنيق",
       price: "300 ر.س",
@@ -189,40 +192,119 @@ renderCards();
     },
   ];
 
-  let currentIndex2 = 0;
+  let currentOfferIndex = 0;
+  const container = document.getElementById("offersContainer");
+  const prevBtn = document.querySelector(".offers-prev");
+  const nextBtn = document.querySelector(".offers-next");
 
-  function renderProduct() {
-    const product = products[currentIndex2];
-    const content = `
-      <div class="bg-white p-4 rounded-lg mb-4">
-        <img src="${product.image}" alt="${product.name}" class="object-contain" />
+  function renderOffer(index) {
+    const offer = offers[index];
+    container.innerHTML = `
+    <div class="flex flex-col md:flex-row justify-between items-center font-baloo container mx-auto py-10 gap-6 relative z-10">
+      
+      <!-- right Side: Large image + countdown -->
+      <div class="">
+                    <h2 class="text-3xl  text-[#252525] mb-2 text-center">عروض لا تفوتك!</h2>
+                    <p class="text-[#252525] mb-6 text-center">لكل مناسبة، لدينا المجوهرات التي تجعلها لا تُنسى</p>
+          <div class="relative bg-[#fffaf4] rounded-xl shadow-md md:px-6 px-2 md:pt-6 pt-2 pb-4 mx-6">
+                        <div class="bg-white p-4 rounded-lg mb-4">
+                            <img src="${
+                              offer.image
+                            }" alt="حلق" class=" object-contain w-[236px] h-[251px]  md:w-[282px] md:h-[300px]" />
+                        </div>
+
+                        <div class="">
+                            <div class="flex justify-between">
+                                <p class="text-lg text-[#CE9461]  ">${
+                                  offer.category
+                                }</p>
+                                <div class="flex justify-end gap-1 text-amber-400 text-3xl font-bold">
+                                    ${"★".repeat(
+                                      offer.rating ?? 4
+                                    )}${"☆".repeat(5 - (offer.rating ?? 4))}
+                                </div>
+                            </div>
+                            <h3 class="text-lg  text-[#252525] mb-2">${
+                              offer.name
+                            }</h3>
+                            <div class="text-lg">
+                                <span class="text-[#B70404] ">${
+                                  offer.price
+                                }</span>
+                                <span class="line-through text-[#25252580]  ml-2">${
+                                  offer.oldPrice
+                                }</span>
+                            </div>
+                        </div>
+                    </div>
       </div>
+      
+                    <!-- left Side: Offer Details Card -->
 
-      <div>
-        <div class="flex justify-between">
-          <p class="text-lg text-[#CE9461]">${product.category}</p>
-          <div class="flex justify-end gap-1 text-amber-400 text-3xl font-bold">
-            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-          </div>
-        </div>
-        <h3 class="text-lg text-[#252525] mb-2">${product.name}</h3>
-        <div class="text-lg">
-          <span class="text-[#B70404]">${product.price}</span>
-          <span class="line-through text-[#25252580] ml-2">${product.oldPrice}</span>
-        </div>
+
+
+                            <div class="">
+                    <img src="${
+                      offer.image2
+                    }" alt="" class="relative rounded-3xl w-[353px] h-[309px]  md:w-[690px] md:h-[604px]">
+                    <div
+                        class="grid auto-cols-max grid-flow-col gap-5 text-center absolute bottom-20 md:left-1/4  transform -translate-x-1/4 -translate-y-2/2">
+                        <div class="flex gap-2 text-white  text-center text-xl">
+
+
+                            <div class="flex flex-col items-center">
+                                <div
+                                    class="bg-white/20 backdrop-blur-md px-4 py-2 md:px-6 md:py-4 rounded-sm text-lg md:text-4xl">
+                                    04</div>
+                                <span class="mt-1 text-xs md:text-xl text-white">ثانية</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div
+                                    class="bg-white/20 backdrop-blur-md px-4 py-2 md:px-6 md:py-4 rounded-sm text-lg md:text-4xl">
+                                    30</div>
+                                <span class="mt-1 text-xs md:text-xl text-white">دقيقة</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div
+                                    class="bg-white/20 backdrop-blur-md px-4 py-2 md:px-6 md:py-4 rounded-sm text-lg md:text-4xl">
+                                    06</div>
+                                <span class="mt-1 text-xs md:text-xl text-white">ساعة</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div
+                                    class="bg-white/20 backdrop-blur-md px-4 py-2 md:px-6 md:py-4 rounded-sm text-lg md:text-4xl">
+                                    08</div>
+                                <span class="mt-1 text-xs md:text-xl text-white">يوم</span>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+
+
+
+
+       
       </div>
-    `;
-    document.getElementById("product-content").innerHTML = content;
+    </div>
+  `;
+  }
+  function showPrev() {
+    currentOfferIndex = (currentOfferIndex - 1 + offers.length) % offers.length;
+    renderOffer(currentOfferIndex);
   }
 
-  function nextProduct() {
-    currentIndex2 = (currentIndex2 + 1) % products.length;
-    renderProduct();
+  function showNext() {
+    currentOfferIndex = (currentOfferIndex + 1) % offers.length;
+    renderOffer(currentOfferIndex);
   }
 
-  function prevProduct() {
-    currentIndex2 = (currentIndex2 - 1 + products.length) % products.length;
-    renderProduct();
+  if (prevBtn && nextBtn) {
+    prevBtn.addEventListener("click", showPrev);
+    nextBtn.addEventListener("click", showNext);
   }
 
-  document.addEventListener("DOMContentLoaded", renderProduct);
+  renderOffer(currentOfferIndex);
+});
